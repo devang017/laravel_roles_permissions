@@ -4,7 +4,7 @@
 
 <div class="app-content-header">
     <div class="container-fluid">
-        <h3 class="mb-0">Create User</h3>
+        <h3 class="mb-0">Create Role</h3>
     </div>
 </div>
 
@@ -13,44 +13,43 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title mb-0">User Form</h3>
+                <h3 class="card-title mb-0">Role Form</h3>
             </div>
 
-            <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('roles.update', $role->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                @method('PUT')
+                @method('PUT');
                 <div class="card-body">
 
                     <div class="row">
 
                         <!-- Name -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter full name" value="{{ old('name', $user->name) }}">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter role name" value="{{ old('name', $role->name) }}">
                             @error('name')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter email" value="{{ old('email', $user->email) }}">
-                            @error('email')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <!-- Single Select -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Role</label>
-                            <select name="roles[]" class="form-select select2" multiple>
-                                <option value="">Select Role</option>
-                                @foreach ($roles as $role)
-                                <option value="{{ $role->id }}" @selected(in_array($role->id, old('roles', $user->roles->pluck('id')->toArray())))>{{ ucfirst($role->name) }}</option>
+                            <label class="form-label">Description</label>
+                            <textarea name="description" rows="3" class="form-control">{{ old('description', $role->description) }}</textarea>
+                            @error('description')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Permissions</label>
+                            <select name="permissions[]" class="form-select select2" multiple>
+
+                                @foreach ($permissions as $permission)
+                                <option value="{{ $permission->id }}" @selected($role->permissions->contains($permission->id))>{{ ucfirst($permission->name) }}</option>
                                 @endforeach
                             </select>
-                            @error('roles')
+                            @error('permissions')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -59,11 +58,11 @@
                 </div>
 
                 <div class="card-footer text-end">
-                    <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('roles.index') }}" class="btn btn-secondary">
                         Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        Save User
+                        Save Role
                     </button>
                 </div>
 
@@ -74,6 +73,8 @@
 </div>
 
 @endsection
+
+
 @section('script')
-@vite('resources/admin/custom/js/users/edit.js')
+@vite('resources/admin/custom/js/role/edit.js')
 @endsection

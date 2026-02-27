@@ -19,7 +19,7 @@ class UserController extends Controller
             return $this->initUsersDataTable($users);
         }
 
-        return view('users.index');
+        return view('user.index');
     }
 
     /**
@@ -28,7 +28,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('users.create', ['roles' => $roles]);
+        return view('user.create', ['roles' => $roles]);
     }
 
     /**
@@ -55,7 +55,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('users.show', ['user' => $user]);
+        return view('user.show', ['user' => $user]);
     }
 
     /**
@@ -63,7 +63,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.edit', ['user' => $user, 'roles' => Role::get()]);
+        return view('user.edit', ['user' => $user, 'roles' => Role::get()]);
     }
 
     /**

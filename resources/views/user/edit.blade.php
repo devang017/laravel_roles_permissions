@@ -16,9 +16,9 @@
                 <h3 class="card-title mb-0">User Form</h3>
             </div>
 
-            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
+                @method('PUT')
                 <div class="card-body">
 
                     <div class="row">
@@ -26,7 +26,7 @@
                         <!-- Name -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Full Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter full name">
+                            <input type="text" name="name" class="form-control" placeholder="Enter full name" value="{{ old('name', $user->name) }}">
                             @error('name')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -35,25 +35,8 @@
                         <!-- Email -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter email">
+                            <input type="email" name="email" class="form-control" placeholder="Enter email" value="{{ old('email', $user->email) }}">
                             @error('email')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Password -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control">
-                            @error('password')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Confirm Password</label>
-                            <input type="password" name="password_confirmation" class="form-control">
-                            @error('password_confirmation')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -62,9 +45,9 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Role</label>
                             <select name="roles[]" class="form-select select2" multiple>
-
+                                <option value="">Select Role</option>
                                 @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                                <option value="{{ $role->id }}" @selected(in_array($role->id, old('roles', $user->roles->pluck('id')->toArray())))>{{ ucfirst($role->name) }}</option>
                                 @endforeach
                             </select>
                             @error('roles')
@@ -91,8 +74,6 @@
 </div>
 
 @endsection
-
-
 @section('script')
-@vite('resources/admin/custom/js/users/create.js')
+@vite('resources/admin/custom/js/user/edit.js')
 @endsection

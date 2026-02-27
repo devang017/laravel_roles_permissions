@@ -14,12 +14,12 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $users = Role::query()->with('Permissions');
+        $roles = Role::query()->with('Permissions');
         if ($request->ajax()) {
-            return $this->initRoleDataTable($users);
+            return $this->initRoleDataTable($roles);
         }
 
-        return view('roles.index');
+        return view('role.index');
     }
 
     /**
@@ -28,7 +28,7 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::all();
-        return view('roles.create', ['permissions' => $permissions]);
+        return view('role.create', ['permissions' => $permissions]);
     }
 
     /**
@@ -54,7 +54,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        return view('roles.show', ['role' => $role]);
+        return view('role.show', ['role' => $role]);
     }
 
     /**
@@ -62,7 +62,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('roles.edit', ['role' => $role, 'permissions' => Permission::all()]);
+        return view('role.edit', ['role' => $role, 'permissions' => Permission::all()]);
     }
 
     /**

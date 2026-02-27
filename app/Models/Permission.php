@@ -12,7 +12,7 @@ class Permission extends Model
 
     protected $table = 'permissions';
 
-    protected $guarded = [];
+    protected $fillable = ['name', 'description'];
 
     public function roles()
     {

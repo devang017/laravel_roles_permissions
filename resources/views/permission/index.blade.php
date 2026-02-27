@@ -11,7 +11,7 @@ Dashboard
             <div class="col-sm-12">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Users</li>
+                    <li class="breadcrumb-item active" aria-current="page">Permissions</li>
                 </ol>
             </div>
         </div>
@@ -29,12 +29,12 @@ Dashboard
             <div class="card-header">
                 <div class="row w-100 align-items-center">
                     <div class="col-md-6">
-                        <h3 class="card-title mb-0">User List</h3>
+                        <h3 class="card-title mb-0">Permission List</h3>
                     </div>
 
                     <div class="col-md-6 text-end">
-                        <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> Create User
+                        <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Create Permission
                         </a>
                     </div>
                 </div>
@@ -50,8 +50,7 @@ Dashboard
                                 <tr>
                                     <th>Id</th>
                                     <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Roles</th>
+                                    <th>Description</th>
                                     <th>Action</th>
 
                                 </tr>
@@ -73,7 +72,7 @@ Dashboard
 
 @section('script')
 <script>
-    let userIndexRoute = "{{ route('users.index') }}";
+    let permissionIndexRoute = "{{ route('permissions.index') }}";
 </script>
-@vite(['resources/admin/custom/js/users/datatable.js'])
+@vite(['resources/admin/custom/js/permission/datatable.js'])
 @endsection

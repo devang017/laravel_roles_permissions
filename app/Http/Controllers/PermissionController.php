@@ -13,12 +13,12 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        $users = Permission::query();
+        $permissions = Permission::query();
         if ($request->ajax()) {
-            return $this->initPermissionDataTable($users);
+            return $this->initPermissionDataTable($permissions);
         }
 
-        return view('permissions.index');
+        return view('permission.index');
     }
 
     /**
@@ -26,7 +26,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        //
+        return view('permission.create');
     }
 
     /**
@@ -39,7 +39,7 @@ class PermissionController extends Controller
             'description' => 'required|string|max:255',
         ]);
 
-        $permission = Permission::create($request->all());
+        Permission::create($request->all());
         return redirect()->route('permissions.index')->with('success', 'Permission created successfully.');
     }
 
@@ -48,7 +48,7 @@ class PermissionController extends Controller
      */
     public function show(Permission $permission)
     {
-        return view('permissions.show', ['permission' => $permission]);
+        return view('permission.show', ['permission' => $permission]);
     }
 
     /**
@@ -56,7 +56,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        return view('permissions.edit', ['permission' => $permission]);
+        return view('permission.edit', ['permission' => $permission]);
     }
 
     /**
