@@ -38,6 +38,7 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:roles,slug',
             'description' => 'required|string|max:255',
             'permissions' => 'required|array',
             'permissions.*' => 'exists:permissions,id',
@@ -72,6 +73,7 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:roles,slug,' . $role->id,
             'description' => 'required|string|max:255',
             'permissions' => 'required|array',
             'permissions.*' => 'exists:permissions,id',

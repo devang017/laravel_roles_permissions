@@ -47,6 +47,11 @@ class UserController extends Controller
         $user = User::create($request->all());
         $user->roles()->attach($request->roles);
 
+        $user->load('roles.permissions');
+        $permissions = $user->roles->flatMap->permissions->unique('id');
+
+        $user->permissions()->sync($permissions);
+
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
@@ -63,7 +68,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('user.edit', ['user' => $user, 'roles' => Role::get()]);
+        $roles = Role::all();
+        return view('user.edit', compact('user', 'roles'));
     }
 
     /**
@@ -71,6 +77,9 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // dd($user->hasPermission('create_author'));
+        // dd($user->hasRole('admin'));
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
@@ -80,6 +89,10 @@ class UserController extends Controller
 
         $user->update($request->all());
         $user->roles()->sync($request->roles);
+
+        $user->load('roles.permissions');
+        $permissions = $user->roles->flatMap->permissions->unique('id');
+        $user->permissions()->sync($permissions);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }

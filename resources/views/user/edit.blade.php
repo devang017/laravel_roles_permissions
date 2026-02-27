@@ -4,7 +4,7 @@
 
 <div class="app-content-header">
     <div class="container-fluid">
-        <h3 class="mb-0">Create User</h3>
+        <h3 class="mb-0">Edit User</h3>
     </div>
 </div>
 

@@ -50,6 +50,7 @@ Dashboard
                                 <tr>
                                     <th>Id</th>
                                     <th>Name</th>
+                                    <th>Slug</th>
                                     <th>Description</th>
                                     <th>Action</th>
 

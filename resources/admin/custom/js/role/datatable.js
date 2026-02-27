@@ -10,6 +10,7 @@ $('#dataTable').DataTable({
     columns: [
         { data: 'id', name: 'id' },
         { data: 'name', name: 'name' },
+        { data: 'slug', name: 'slug' },
         { data: 'description', name: 'description' },
         { data: 'permissions', name: 'permissions', orderable: false, searchable: false },
         { data: 'action', name: 'action', orderable: false, searchable: false }

@@ -32,6 +32,14 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Slug</label>
+                            <input type="text" name="slug" class="form-control" placeholder="Enter role slug" value="{{ old('slug', $role->slug) }}">
+                            @error('slug')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Single Select -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Description</label>

@@ -32,6 +32,14 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Slug</label>
+                            <input type="text" name="slug" class="form-control" placeholder="Enter permission slug" value="{{ old('slug', $permission->slug) }}">
+                            @error('slug')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Email -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Description</label>
