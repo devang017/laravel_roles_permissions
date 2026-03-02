@@ -21,7 +21,7 @@ class PermissionService
      */
     public function getAllPermissions(Request $request)
     {
-        return $this->permissionModel::query();
+        return $this->permissionModel->newQuery();
     }
 
 
@@ -33,7 +33,7 @@ class PermissionService
      */
     public function storePermissions(array $permissions)
     {
-        $this->permissionModel::create($permissions);
+        $this->permissionModel->create($permissions);
     }
 
     /**
@@ -45,7 +45,7 @@ class PermissionService
      */
     public function getSinglePermission(string $id)
     {
-        return $this->permissionModel::findOrFail($id);
+        return $this->permissionModel->findOrFail($id);
     }
 
     /**

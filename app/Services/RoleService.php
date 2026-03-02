@@ -21,7 +21,7 @@ class RoleService
      */
     public function getRoleList(Request $request)
     {
-        return $this->roleModel::query()->with('permissions');
+        return $this->roleModel->newQuery()->with('permissions');
     }
 
     /**
@@ -35,7 +35,7 @@ class RoleService
     public function storeRole(array $requestData)
     {
         DB::transaction(function () use ($requestData) {
-            $role = $this->roleModel::create($requestData);
+            $role = $this->roleModel->create($requestData);
             $role->permissions()->attach($requestData['permissions']);
         });
     }
@@ -49,7 +49,7 @@ class RoleService
      */
     public function getSingleRole(string $id)
     {
-        return $this->roleModel::findOrFail($id);
+        return $this->roleModel->findOrFail($id);
     }
 
     /**
