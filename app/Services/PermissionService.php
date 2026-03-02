@@ -77,4 +77,9 @@ class PermissionService
             $permission->delete();
         });
     }
+
+    public function getPermissionList()
+    {
+        return $this->permissionModel->select('id', 'name')->get();
+    }
 }

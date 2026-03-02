@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
-use App\Models\Role;
+use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
+use App\Services\PermissionService;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
 {
+    function __construct(protected RoleService $roleService, protected PermissionService $permissionService) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $roles = Role::query()->with('permissions');
+        $roles = $this->roleService->getRoleList($request);
         if ($request->ajax()) {
             return $this->initRoleDataTable($roles);
         }
@@ -27,72 +31,68 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all();
-        return view('role.create', ['permissions' => $permissions]);
+        $permissions = $this->permissionService->getPermissionList();
+        return view('role.create', compact('permissions'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:roles,slug',
-            'description' => 'required|string|max:255',
-            'permissions' => 'required|array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
+        try {
+            $this->roleService->storeRole($request->validated());
+        } catch (\Throwable $e) {
+            return redirect()->route('roles.index')->with('error', trans('admin.message.something_wrong'));
+        }
 
-        $role = Role::create($request->all());
-        $role->permissions()->attach($request->permissions);
-
-        return redirect()->route('roles.index')->with('success', 'Role created successfully.');
+        return redirect()->route('roles.index')->with('success', trans('admin.message.created', ['module' => 'Role']));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(string $id)
     {
-        return view('role.show', ['role' => $role]);
+        $role = $this->roleService->getSingleRole($id);
+        return view('role.show', compact('role'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
+    public function edit(string $id)
     {
-        return view('role.edit', ['role' => $role, 'permissions' => Permission::all()]);
+        $role = $this->roleService->getSingleRole($id);
+        $permissions = $this->permissionService->getPermissionList();
+        return view('role.edit', compact('role', 'permissions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Role $role)
+    public function update(UpdateRoleRequest $request, string $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:roles,slug,' . $role->id,
-            'description' => 'required|string|max:255',
-            'permissions' => 'required|array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
+        try {
+            $this->roleService->updateRole($id, $request->validated());
+        } catch (\Throwable $e) {
+            return redirect()->route('roles.index')->with('error', trans('admin.message.something_wrong'));
+        }
 
-        $role->update($request->all());
-        $role->permissions()->sync($request->permissions);
-
-        return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
+        return redirect()->route('roles.index')->with('success', trans('admin.message.updated', ['module' => 'Role']));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
+    public function destroy(string $id)
     {
-        $role->permissions()->detach();
-        $role->delete();
-        return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+        try {
+            $this->roleService->deleteRole($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('roles.index')->with('error', trans('admin.message.something_wrong'));
+        }
+        return redirect()->route('roles.index')->with('success', trans('admin.message.deleted', ['module' => 'Role']));
     }
 
     public function initRoleDataTable(object $roles)
