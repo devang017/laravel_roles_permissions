@@ -19,7 +19,7 @@ class RoleService
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getRoleList(Request $request)
+    public function getAllRoles(Request $request)
     {
         return $this->roleModel->newQuery()->with('permissions');
     }
@@ -89,5 +89,15 @@ class RoleService
             $role->permissions()->detach();
             $role->delete();
         });
+    }
+
+    /**
+     * Retrieves a list of roles with their IDs and names.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getRoleList()
+    {
+        return $this->roleModel->newQuery()->select('id', 'name')->get();
     }
 }

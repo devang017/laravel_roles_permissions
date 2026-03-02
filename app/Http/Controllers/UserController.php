@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Yajra\DataTables\Facades\DataTables;
-use App\Models\Role;
-use App\Models\User;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Services\RoleService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
+    function __construct(protected UserService $userService, protected RoleService $roleService) {}
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $users = User::query()->with('roles');
+        $users = $this->userService->getAllUsers($request);
         if ($request->ajax()) {
             return $this->initUsersDataTable($users);
         }
@@ -27,30 +30,20 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
-        return view('user.create', ['roles' => $roles]);
+        $roles = $this->roleService->getRoleList();
+        return view('user.create', compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',
-        ]);
-
-        $user = User::create($request->all());
-        $user->roles()->attach($request->roles);
-
-        $user->load('roles.permissions');
-        $permissions = $user->roles->flatMap->permissions->unique('id');
-
-        $user->permissions()->sync($permissions);
+        try {
+            $this->userService->storeUser($request->validated());
+        } catch (\Throwable $e) {
+            return redirect()->route('users.index')->with('error', trans('admin.message.something_wrong'));
+        }
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -58,41 +51,44 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(string $id)
     {
-        return view('user.show', ['user' => $user]);
+        try {
+            $user = $this->userService->getSingleUser($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('users.index')->with('error', trans('admin.message.something_wrong'));
+        }
+        return view('user.show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(string $id)
     {
-        $roles = Role::all();
+        try {
+            $user = $this->userService->getSingleUser($id);
+            $roles = $this->roleService->getRoleList();
+        } catch (\Throwable $e) {
+            return redirect()->route('users.index')->with('error', trans('admin.message.something_wrong'));
+        }
+
         return view('user.edit', compact('user', 'roles'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, string $id)
     {
         // dd($user->hasPermission('create_author'));
         // dd($user->hasRole('admin'));
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',
-        ]);
-
-        $user->update($request->all());
-        $user->roles()->sync($request->roles);
-
-        $user->load('roles.permissions');
-        $permissions = $user->roles->flatMap->permissions->unique('id');
-        $user->permissions()->sync($permissions);
+        try {
+            $this->userService->updateUser($request->validated(), $id);
+        } catch (\Throwable $e) {
+            return redirect()->route('users.index')->with('error', trans('admin.message.something_wrong'));
+        }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
@@ -100,10 +96,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(string $id)
     {
-        $user->roles()->detach();
-        $user->delete();
+        try {
+            $this->userService->deleteUser($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('users.index')->with('error', trans('admin.message.something_wrong'));
+        }
+
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 

@@ -18,7 +18,7 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $roles = $this->roleService->getRoleList($request);
+        $roles = $this->roleService->getAllRoles($request);
         if ($request->ajax()) {
             return $this->initRoleDataTable($roles);
         }
