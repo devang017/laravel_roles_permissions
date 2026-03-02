@@ -46,6 +46,8 @@
     'resources/admin/plugins/datatable/datatables-plugin.js'
     ])
 
+    @include('partials.flash-message')
+
     @yield('script')
 </body>
 <!--end::Body-->

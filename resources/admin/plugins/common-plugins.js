@@ -17,6 +17,10 @@ select2();
 $.fn.select2.defaults.set('theme', 'bootstrap-5');
 $.fn.select2.defaults.set('width', '100%');
 
+import Swal from 'sweetalert2';
+
+window.Swal = Swal;
+
 // overlayscrollbars
 import { OverlayScrollbars } from "overlayscrollbars";
 import "overlayscrollbars/styles/overlayscrollbars.css";
@@ -32,6 +36,15 @@ window.addEventListener("load", () => {
             },
         });
     }
+});
+
+// Create reusable Toast instance
+window.Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
 });
 
 import.meta.glob([

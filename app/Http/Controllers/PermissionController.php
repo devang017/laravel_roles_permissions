@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Permission\StorePermissionRequest;
+use App\Http\Requests\Permission\UpdatePermissionRequest;
+use App\Services\PermissionService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class PermissionController extends Controller
 {
+
+    function __construct(protected PermissionService $permissionService) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $permissions = Permission::query();
+        $permissions = $this->permissionService->getAllPermissions($request);
         if ($request->ajax()) {
             return $this->initPermissionDataTable($permissions);
         }
@@ -32,60 +38,80 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePermissionRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:permissions,slug',
-            'description' => 'required|string|max:255',
-        ]);
+        try {
+            $this->permissionService->storePermissions($request->validated());
+        } catch (\Throwable $e) {
+            return redirect()->route('permissions.index')->with('error', trans('admin.message.something_wrong'));
+        }
 
-        Permission::create($request->all());
-        return redirect()->route('permissions.index')->with('success', 'Permission created successfully.');
+        return redirect()->route('permissions.index')->with('success', trans('admin.message.created', ['module' => 'Permission']));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Permission $permission)
+    public function show(string $id)
     {
-        return view('permission.show', ['permission' => $permission]);
+        try {
+            $permission = $this->permissionService->getSinglePermission($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('permissions.index')->with('error', trans('admin.message.something_wrong'));
+        }
+        return view('permission.show', compact('permission'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Permission $permission)
+    public function edit(string $id)
     {
-        return view('permission.edit', ['permission' => $permission]);
+        try {
+            $permission = $this->permissionService->getSinglePermission($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('permissions.index')->with('error', trans('admin.message.something_wrong'));
+        }
+
+        return view('permission.edit', compact('permission'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Permission $permission)
+    public function update(UpdatePermissionRequest $request, string $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:permissions,slug,' . $permission->id,
-            'description' => 'required|string|max:255'
-        ]);
-
-        $permission->update($request->all());
-
-        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
+        try {
+            $this->permissionService->updatePermissions($request->validated(), $id);
+        } catch (\Throwable $e) {
+            return redirect()->route('permissions.index')->with('error', trans('admin.message.something_wrong'));
+        }
+        return redirect()->route('permissions.index')->with('success', trans('admin.message.updated', ['module' => 'Permission']));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy(string $id)
     {
-        $permission->roles()->detach();
-        $permission->delete();
-        return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully.');
+        try {
+            $this->permissionService->deletePermission($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('permissions.index')->with('error', trans('admin.message.something_wrong'));
+        }
+
+        return redirect()->route('permissions.index')->with('success', trans('admin.message.deleted', ['module' => 'Permission']));
     }
 
+    /**
+     * Initialize a DataTable with permissions data.
+     *
+     * This function adds an index column and an action column to the DataTable.
+     * The action column contains an edit and delete button for each permission.
+     *
+     * @param object $permissions An object containing the permissions data.
+     * @return \Yajra\DataTables\DataTables The DataTable with the permissions data.
+     */
     public function initPermissionDataTable(object $permissions)
     {
         return DataTables::of($permissions)
