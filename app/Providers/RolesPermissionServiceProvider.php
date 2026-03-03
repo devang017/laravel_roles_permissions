@@ -23,7 +23,7 @@ class RolesPermissionServiceProvider extends ServiceProvider
     public function boot(): void
     {
         try {
-            Permission::query()->each(function ($permission) {
+            Permission::with('roles')->query()->each(function ($permission) {
                 Gate::define($permission->slug, function ($user) use ($permission) {
                     return $user->hasPermissionTo($permission);
                 });
