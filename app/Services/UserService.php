@@ -44,7 +44,7 @@ class UserService
             $user->load('roles.permissions');
             $permissions = $user->roles->flatMap->permissions->unique('id');
 
-            $user->permissions()->sync($permissions);
+            $user->permissions()->attach($permissions);
         });
     }
 
