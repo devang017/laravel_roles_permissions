@@ -27,23 +27,27 @@
                         </p>
                     </a>
                 </li>
+                @canany(['author_list', 'role_list', 'permission_list'])
                 <li class="nav-item {{ activeSubMenu(['users', 'roles', 'permissions']) }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-people"></i>
                         <p>
-                            Users
+                            Settings
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
 
+                    @can('author_list')
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('users.index') }}" class="nav-link {{ activeMenu('users') }}">
                                 <i class="nav-icon bi bi-circle"></i>
-                                <p>User List</p>
+                                <p>Users</p>
                             </a>
                         </li>
                     </ul>
+                    @endcan
+                    @can('role_list')
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('roles.index') }}" class="nav-link {{ activeMenu('roles') }}">
@@ -52,6 +56,8 @@
                             </a>
                         </li>
                     </ul>
+                    @endcan
+                    @can('permission_list')
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('permissions.index') }}" class="nav-link {{ activeMenu('permissions') }}">
@@ -60,9 +66,9 @@
                             </a>
                         </li>
                     </ul>
+                    @endcan
                 </li>
-
-
+                @endcanany
             </ul>
             <!--end::Sidebar Menu-->
         </nav>
