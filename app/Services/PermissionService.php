@@ -61,8 +61,9 @@ class PermissionService
     public function updatePermissions(array $permissions, string $id)
     {
         DB::transaction(function () use ($permissions, $id) {
-            $permission = $this->getSinglePermission($id)->update($permissions);
-            $this->getSinglePermission($id)->roles()->sync($permissions['roles']);
+            $permission = $this->getSinglePermission($id);
+            $permission->update($permissions);
+            $permission->roles()->sync($permissions['roles']);
         });
     }
 
