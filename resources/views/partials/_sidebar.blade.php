@@ -18,26 +18,16 @@
         <nav class="mt-2">
             <!--begin::Sidebar Menu-->
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" aria-label="Main navigation" data-accordion="false" id="navigation">
-                <li class="nav-item menu-open">
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+
+                <li class="nav-item {{ activeMenu('dashboard') }}">
+                    <a href="{{ route('dashboard') }}" class="nav-link">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
                             Dashboard
-                            <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="./index.html" class="nav-link">
-                                <i class="nav-icon bi bi-circle"></i>
-                                <p>Dashboard v1</p>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ activeSubMenu(['users', 'roles', 'permissions']) }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-people"></i>
                         <p>
@@ -48,7 +38,7 @@
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('users.index') }}" class="nav-link">
+                            <a href="{{ route('users.index') }}" class="nav-link {{ activeMenu('users') }}">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>User List</p>
                             </a>
@@ -56,7 +46,7 @@
                     </ul>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('roles.index') }}" class="nav-link">
+                            <a href="{{ route('roles.index') }}" class="nav-link {{ activeMenu('roles') }}">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>Roles</p>
                             </a>
@@ -64,14 +54,14 @@
                     </ul>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('permissions.index') }}" class="nav-link">
+                            <a href="{{ route('permissions.index') }}" class="nav-link {{ activeMenu('permissions') }}">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>Permissions</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-                </li>
+
 
             </ul>
             <!--end::Sidebar Menu-->
