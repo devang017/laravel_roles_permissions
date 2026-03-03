@@ -40,6 +40,18 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Roles</label>
+                            <select name="roles[]" class="form-select select2" multiple>
+                                @foreach ($roles as $role)
+                                <option value="{{ $role->id }}" @selected(in_array($role->id, $permission->roles->pluck('id')->toArray()))>{{ ucfirst($role->name) }}</option>
+                                @endforeach
+                            </select>
+                            @error('roles')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Email -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Description</label>

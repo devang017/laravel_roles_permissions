@@ -33,7 +33,10 @@ class PermissionService
      */
     public function storePermissions(array $permissions)
     {
-        $this->permissionModel->create($permissions);
+        DB::transaction(function () use ($permissions) {
+            $permission = $this->permissionModel->create($permissions);
+            $permission->roles()->attach($permissions['roles']);
+        });
     }
 
     /**
@@ -45,7 +48,7 @@ class PermissionService
      */
     public function getSinglePermission(string $id)
     {
-        return $this->permissionModel->findOrFail($id);
+        return $this->permissionModel->with('roles')->findOrFail($id);
     }
 
     /**
@@ -57,7 +60,10 @@ class PermissionService
      */
     public function updatePermissions(array $permissions, string $id)
     {
-        $this->getSinglePermission($id)->update($permissions);
+        DB::transaction(function () use ($permissions, $id) {
+            $permission = $this->getSinglePermission($id)->update($permissions);
+            $this->getSinglePermission($id)->roles()->sync($permissions['roles']);
+        });
     }
 
     /**

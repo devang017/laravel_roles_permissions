@@ -25,6 +25,8 @@ class StorePermissionRequest extends FormRequest
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:permissions,slug',
             'description' => 'required|string|max:255',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,id',
         ];
     }
 }

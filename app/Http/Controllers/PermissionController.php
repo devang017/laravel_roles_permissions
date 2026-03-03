@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Permission\StorePermissionRequest;
 use App\Http\Requests\Permission\UpdatePermissionRequest;
 use App\Services\PermissionService;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class PermissionController extends Controller
 {
 
-    function __construct(protected PermissionService $permissionService) {}
+    function __construct(protected PermissionService $permissionService, protected RoleService $roleService) {}
 
     /**
      * Display a listing of the resource.
@@ -32,7 +33,8 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('permission.create');
+        $roles = $this->roleService->getRoleList();
+        return view('permission.create', compact('roles'));
     }
 
     /**
@@ -68,12 +70,13 @@ class PermissionController extends Controller
     public function edit(string $id)
     {
         try {
+            $roles = $this->roleService->getRoleList();
             $permission = $this->permissionService->getSinglePermission($id);
         } catch (\Throwable $e) {
             return redirect()->route('permissions.index')->with('error', trans('admin.message.something_wrong'));
         }
 
-        return view('permission.edit', compact('permission'));
+        return view('permission.edit', compact('permission', 'roles'));
     }
 
     /**

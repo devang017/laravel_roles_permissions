@@ -24,7 +24,9 @@ class UpdatePermissionRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:permissions,slug,' . $this->permission,
-            'description' => 'required|string|max:255'
+            'description' => 'required|string|max:255',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,id',
         ];
     }
 }
