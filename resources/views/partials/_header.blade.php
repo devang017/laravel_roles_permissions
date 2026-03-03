@@ -12,9 +12,6 @@
         <!--end::Start Navbar Links-->
         <!--begin::End Navbar Links-->
         <ul class="navbar-nav ms-auto">
-
-
-
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     <img src="{{ Vite::asset('resources/admin/assets/img/user2-160x160.jpg') }}" class="user-image rounded-circle shadow" alt="User Image" />
